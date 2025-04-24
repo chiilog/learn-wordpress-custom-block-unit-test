@@ -15,6 +15,10 @@
 		"message": {
 			"type": "string",
 			"default": "Hello from the block!"
+		},
+		"type": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"textdomain": "example-static",

@@ -11,7 +11,12 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { RichText, useBlockProps } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	RichText,
+	useBlockProps,
+} from '@wordpress/block-editor';
+import { PanelBody, SelectControl } from '@wordpress/components';
 import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -22,6 +27,7 @@ import type { BlockEditProps } from '@wordpress/blocks';
  */
 import './editor.scss';
 import type { BlockAttributes } from './BlockAttributes';
+import getClassNameByType from './utils/getClassNameByType';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -30,18 +36,65 @@ import type { BlockAttributes } from './BlockAttributes';
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
  */
 export default function Edit( {
-	attributes: { message },
+	attributes: { message, type },
 	setAttributes,
 }: BlockEditProps< BlockAttributes > ) {
+	const classNames = getClassNameByType( { type } );
+	const blockProps = useBlockProps( { className: classNames } );
+
+	const onChangeType = ( value: string ) => {
+		setAttributes( { type: value as BlockAttributes[ 'type' ] } );
+	};
+
+	const selectTypeControl = (
+		<InspectorControls>
+			<PanelBody
+				title={ __( 'Type', 'example-static' ) }
+				initialOpen={ true }
+			>
+				<SelectControl
+					label={ __( 'Type', 'example-static' ) }
+					value={ type }
+					onChange={ onChangeType }
+					options={ [
+						{
+							label: __( 'Neutral', 'example-static' ),
+							value: 'neutral',
+						},
+						{
+							label: __( 'Warning', 'example-static' ),
+							value: 'warning',
+						},
+						{
+							label: __( 'Info', 'example-static' ),
+							value: 'info',
+						},
+						{
+							label: __( 'Success', 'example-static' ),
+							value: 'success',
+						},
+						{
+							label: __( 'Error', 'example-static' ),
+							value: 'error',
+						},
+					] }
+				/>
+			</PanelBody>
+		</InspectorControls>
+	);
+
 	return (
-		<div { ...useBlockProps() }>
-			<RichText
-				tagName="p"
-				value={ message }
-				onChange={ ( value ) => {
-					setAttributes( { message: value } );
-				} }
-			/>
-		</div>
+		<>
+			{ selectTypeControl }
+			<div { ...blockProps }>
+				<RichText
+					tagName="p"
+					value={ message }
+					onChange={ ( value ) => {
+						setAttributes( { message: value } );
+					} }
+				/>
+			</div>
+		</>
 	);
 }

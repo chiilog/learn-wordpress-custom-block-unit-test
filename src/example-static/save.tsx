@@ -8,6 +8,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
 import type { BlockAttributes } from './BlockAttributes';
+import getClassNameByType from './utils/getClassNameByType';
 
 /**
  * The save function defines the way in which the different attributes should
@@ -15,14 +16,14 @@ import type { BlockAttributes } from './BlockAttributes';
  * editor into `post_content`.
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
- *
- * @return {Element} Element to render.
  */
 export default function save( {
-	attributes: { message },
+	attributes: { message, type },
 }: BlockSaveProps< BlockAttributes > ) {
+	const classNames = getClassNameByType( { type } );
+	const blockProps = useBlockProps.save( { className: classNames } );
 	return (
-		<div { ...useBlockProps.save() }>
+		<div { ...blockProps }>
 			<p>{ message }</p>
 		</div>
 	);
